@@ -69,6 +69,7 @@ class AudioPlayer:
         self.queue.put(wav_data)
 audio_player = AudioPlayer()
 
+# generate url for Green API
 def generateUrl(method, id):
     # input the instance number and token
     instanceId = "7103865679"
@@ -86,7 +87,8 @@ def generateUrl(method, id):
         return baseUrl + "showMessagesQueue/" + token
     if method == 'delete':
         return baseUrl + "deleteNotification/" + token + chatId
-    
+
+# send message to recipient phone number 
 def sendMessage(message, recipient):
     url = generateUrl("send", 0)
     payload = {
@@ -101,6 +103,7 @@ def sendMessage(message, recipient):
 
     response = requests.request("POST", url, headers=headers, data=data)
 
+# receive message from GreenAPI‘s message Queue
 def receiveMessage():
     url = generateUrl("receive", 0)
     data = {}
@@ -115,6 +118,7 @@ def deleteMessage(receiptId):
     url = generateUrl("delete", receiptId)
     response = requests.request("DELETE", url, headers=headers, data=payload)
 
+# clean GreenAPI‘s message Queue
 def cleanMessageQueue():
     while True:
         data = receiveMessage()
@@ -122,20 +126,7 @@ def cleanMessageQueue():
             return
         deleteMessage(data["receiptId"])
 
-def cleanOneMessage():
-    while True:
-        data = receiveMessage()
-        if data == None:
-            print("clean finish")
-            return
-        if data["body"]["typeWebhook"] == "outgoingMessageReceived":
-            deleteMessage(data["receiptId"])
-            print(f"delete 1 main message ...")
-            return
-        
-        deleteMessage(data["receiptId"])
-        print(f"delete 1 message ...")
-
+# wait user to send message, blocking io
 def wait_one_message():
     # block and wait for one message from user
     while True:
@@ -156,6 +147,7 @@ def wait_one_message():
             deleteMessage(data["receiptId"])
             return result
 
+# get one user message from queue, non-blocking io
 def read_one_message():
     # get one user message from queue
     while True:
@@ -174,6 +166,7 @@ def read_one_message():
             deleteMessage(data["receiptId"])
             return result
 
+# async task to receive user message and send to server
 async def handle_text(websocket):
     while True:
         # check the queue every 5 seconds
@@ -186,6 +179,7 @@ async def handle_text(websocket):
         print(f"\nUser: {message}")
         await websocket.send(message)
 
+# async task to receive response from server, concatenate the result and send to user
 async def receive_message(websocket):
     # message init
     finalResult = "Elon>"
@@ -230,6 +224,7 @@ async def receive_message(websocket):
             print("Unexpected message")
             break
 
+# establish connection with user
 def establish_connection(session_id, url):
     # cleaning the message queue and waiting for user connection
     print("cleaning the existing message in the queue ...")

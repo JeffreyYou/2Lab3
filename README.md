@@ -15,3 +15,9 @@ python cli.py run-uvicorn
 python ./whatsapp.py
 ```
 
+
+
+## Development Log
+
+[Development Log](./log/log.md)
+
