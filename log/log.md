@@ -15,7 +15,7 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
 
 ## Progress Log
 
-### Oct 10. 2023]
+### Oct 10. 2023
 
 - **Time Spent:** 5 hours
 - **Tasks Completed:**
@@ -45,11 +45,29 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
   - Support concurrent connection
   - Find a way to support WhatsApp stream transmission
 
+### Oct 12. 2023
+
+- **Time Spent:** 4 hour
+- **Tasks Completed:**
+  - Remove audio generation, significantly improve the overall response time
+- **Issues Encountered:**
+  - None
+- **Solutions/Actions Taken:**
+  - None
+- **Next Steps:**
+  - Support concurrent connection
+  - Find a way to support WhatsApp stream transmission
+
 ## Decisions Made
 
 - The connection is triggered by the user's first message
 
 ## Code Changes
+
+### Oct 10-11. 2023
+<details> <summary> <b>👇 click me </b></summary>
+
+Changes in `whatsapp.py`
 
 - ```python
   # generate url for Green API
@@ -233,6 +251,37 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
       uri = f"ws://{url}/ws/{session_id}?api_key={api_key}&llm_model={llm_model}"
       return uri
   ```
+
+</details>  
+
+### Oct 12. 2023
+
+Changes in `./realtime_ai_character/llm/openai_llm.py`
+
+- ```python
+  # audioCallback is removed
+  async def achat(self,
+        history: List[BaseMessage],
+        user_input: str,
+        user_input_template: str,
+        callback: AsyncCallbackTextHandler,
+        # audioCallback: AsyncCallbackAudioHandler,
+        character: Character,
+        useSearch: bool = False,
+        useQuivr: bool = False,
+        useMultiOn: bool = False,
+        quivrApiKey: str = None,
+        quivrBrainId: str = None,
+        metadata: dict = None,
+        *args, **kwargs) -> str:
+  
+  response = await self.chat_open_ai.agenerate(
+        [history], callbacks=[callback, StreamingStdOutCallbackHandler()],
+        metadata=metadata)
+  
+  ```
+
+- 
 
 ## Testing and Quality Assurance
 
