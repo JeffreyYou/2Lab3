@@ -261,6 +261,7 @@ Changes in `whatsapp.py`
 
 ### Oct 12. 2023
 <details> <summary> <b>👇 click me </b></summary>
+
 Changes in `./realtime_ai_character/llm/openai_llm.py`
 
 Relevant Task: remove audio
@@ -370,7 +371,7 @@ Relevant Task: implement memory
       return identifier
   ```
 
-- 
+
 
 </details>
 
