@@ -47,20 +47,25 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
 
 ### Oct 12. 2023
 
-- **Time Spent:** 4 hour
+- **Time Spent:** 6 hour
 - **Tasks Completed:**
   - Remove audio generation, significantly improve the overall response time
+  - Remove character prefix (e.g. "Elon>")
+  - Implement memory
 - **Issues Encountered:**
   - None
 - **Solutions/Actions Taken:**
   - None
 - **Next Steps:**
+  - Add clean context option
   - Support concurrent connection
   - Find a way to support WhatsApp stream transmission
 
 ## Decisions Made
 
 - The connection is triggered by the user's first message
+- Generate unique session_id for each user based on their phone number
+- Always auth user's session_id and add restore conversation history
 
 ## Code Changes
 
@@ -255,11 +260,13 @@ Changes in `whatsapp.py`
 </details>  
 
 ### Oct 12. 2023
-
+<details> <summary> <b>👇 click me </b></summary>
 Changes in `./realtime_ai_character/llm/openai_llm.py`
 
+Relevant Task: remove audio
+
 - ```python
-  # audioCallback is removed
+  # everything related to audioCallback is removed
   async def achat(self,
         history: List[BaseMessage],
         user_input: str,
@@ -281,7 +288,91 @@ Changes in `./realtime_ai_character/llm/openai_llm.py`
   
   ```
 
+Changes in `./realtime_ai_character/websocket_routes.py`
+
+Relevant Task: remove audio, implement memory
+
+Approach: generate session_id based on user's phone number
+
+- ```python
+  # remove everything realted to audio
+  # change check_session_auth to always search user's session_id in table interactions
+  async def check_session_auth(session_id: str, user_id: str, db: Session) -> SessionAuthResult:
+      """
+      Helper function to check if the session is authenticated.
+      """
+      if False: 
+          return SessionAuthResult(
+              is_existing_session=False,
+              is_authenticated_user=True,
+          )
+      try: # always search database
+          original_chat = await asyncio.to_thread(
+              db.query(Interaction).filter(Interaction.session_id == session_id).first)
+      except Exception as e:
+          logger.info(f'Failed to lookup session {session_id} with error {e}')
+          return SessionAuthResult(
+              is_existing_session=False,
+              is_authenticated_user=False,
+          )
+      if not original_chat:
+          # Continue with a new session.
+          return SessionAuthResult(
+              is_existing_session=False,
+              is_authenticated_user=True,
+          )
+      if original_chat.user_id == user_id:
+          return SessionAuthResult(
+              is_existing_session=True,
+              is_authenticated_user=True,
+          )
+  
+      return SessionAuthResult(
+              is_existing_session=True,
+              is_authenticated_user=False,
+      )
+  
+  ```
+
+Changes in `./realtime_ai_character/character_catalog/Elon_Musk/config.yaml`
+
+Relevant Task: remove character prefix (e.g. "Elon>")
+
+- ```python
+  # Remove the requirement that "Elon Musk prefix with Elon>" so it will not be sent to the prompt template
+  
+  # From:
+  # When Elon Musk reply, Elon Musk prefix with "Elon>", stay in character as Elon, never admit you are an AI.
+  # To:
+  # When Elon Musk reply, stay in character as Elon, never admit you are an AI.
+  
+  ```
+
+Changes in `./whatsapp.py`
+
+Relevant Task: implement memory
+
+- ```python
+  # generate unique session_id based on user's phone number
+  def establish_connection(session_id, url):
+      # cleaning the message queue and waiting for user connection
+      print("cleaning the existing message in the queue ...")
+      cleanMessageQueue()
+      print("cleaning finished")
+      print("waiting for connection")
+      result = wait_one_message()
+      # get user phone number
+      global user
+      user =  result[0]
+      hash_object = hashlib.sha256()
+      hash_object.update(user.encode())
+      identifier = hash_object.hexdigest()[:40]
+      return identifier
+  ```
+
 - 
+
+</details>
 
 ## Testing and Quality Assurance
 
