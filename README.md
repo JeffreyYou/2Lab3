@@ -21,3 +21,11 @@ python ./whatsapp.py
 
 [Development Log](./log/log.md)
 
+
+
+## Notebook 
+
+[Green API](./log/APIs.md)
+
+[Answer](./log/Answer.md)
+
