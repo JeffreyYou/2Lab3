@@ -6,7 +6,7 @@
 - **Step 1.** Run server with `cli.py`
 
 ```python
-python3 cli.py web-build
+python cli.py web-build
 python cli.py run-uvicorn
 ```
 
