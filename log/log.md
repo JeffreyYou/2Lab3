@@ -393,8 +393,8 @@ Relevant Task: implement memory
 
 ### Oct 23. 2023
 <details> <summary> <b>👇 click me </b></summary>
-Changes in `./whatsapp.py`
 
+Changes in `./whatsapp.py`
 Relevant Task: Add clean context function for test, select Isabel as default, add global first_message to keep the first message
 -  ```python
 
