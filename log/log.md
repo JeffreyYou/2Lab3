@@ -393,66 +393,67 @@ Relevant Task: implement memory
 
 ### Oct 23. 2023
 <details> <summary> <b>👇 click me </b></summary>
-
 Changes in `./whatsapp.py`
 Relevant Task: Add clean context function for test, select Isabel as default, add global first_message to keep the first message
--  ```python
 
-# ---------------------Add clean context function for test--------------------
-  async def main(url):
-      # clean context
-      clean_context()
+- ```python
+  # ---------------------Add clean context function for test--------------------
   
-      session_id = establish_connection()
-      task = asyncio.create_task(start_client(session_id, url))
-      try:
-          await task
-      except KeyboardInterrupt:
-          task.cancel()
-          await asyncio.wait_for(task, timeout=None)
-          print("Client stopped by user")
+    async def main(url):
+        # clean context
+        clean_context()
   
-  def clean_context():
-      print("[Test only] cleaning user context...")
-      commands = """
-      delete from interactions;
-      """
-      process = subprocess.Popen(['sqlite3', 'test.db'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-      stdout, stderr = process.communicate(input=commands.encode('utf-8'))
-      print("[Test only] cleaning finished")
+        session_id = establish_connection()
+        task = asyncio.create_task(start_client(session_id, url))
+        try:
+            await task
+        except KeyboardInterrupt:
+            task.cancel()
+            await asyncio.wait_for(task, timeout=None)
+            print("Client stopped by user")
   
-      print(stdout.decode('utf-8'))
-      if stderr:
-          print("Errors: ", stderr.decode('utf-8'))
+    def clean_context():
+        print("[Test only] cleaning user context...")
+        commands = """
+        delete from interactions;
+        """
+        process = subprocess.Popen(['sqlite3', 'test.db'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = process.communicate(input=commands.encode('utf-8'))
+        print("[Test only] cleaning finished")
   
-  # -----------select Isabel default, remeber the first_message----------------------------
-  async with websockets.connect(uri) as websocket:
-          # send client platform info
-          await websocket.send('terminal')
-          print(f"Client #{session_id} connected to server")
-          welcome_message = await websocket.recv()
-          # select Elon Musk
-          # await websocket.send("1")
-          # select Isable
-          await websocket.send("7")
-          # sendMessage("[Connection established!]\nYou are chatting with Elon Musk", user)
-          # sendMessage("[Test Message]\nYou are chatting with Isable", user)
-          # send first message
-          await websocket.send(first_message)
-          clean_system_message()
-          
-          
-  # -------------------add global first_message, import subprocess----------------
-  import subprocess
+        print(stdout.decode('utf-8'))
+        if stderr:
+            print("Errors: ", stderr.decode('utf-8'))
   
-  load_dotenv()
-  executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+    # -----------select Isabel default, remeber the first_message----------------------------
+    async with websockets.connect(uri) as websocket:
+            # send client platform info
+            await websocket.send('terminal')
+            print(f"Client #{session_id} connected to server")
+            welcome_message = await websocket.recv()
+            # select Elon Musk
+            # await websocket.send("1")
+            # select Isable
+            await websocket.send("7")
+            # sendMessage("[Connection established!]\nYou are chatting with Elon Musk", user)
+            # sendMessage("[Test Message]\nYou are chatting with Isable", user)
+            # send first message
+            await websocket.send(first_message)
+            clean_system_message()
+            
+            
+    # -------------------add global first_message, import subprocess----------------
+    import subprocess
   
-  global user
-  global first_message
+    load_dotenv()
+    executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+  
+    global user
+    global first_message
+  
   ```
-
-
+  
+  
 
 Changes in `./realtime_ai_character/websocket_routes.py`
 
@@ -530,7 +531,7 @@ system: |
       26.如果对方拒绝再讨论游戏话题，告诉对方今天很累了，要休息一下，晚点再聊，终止此次对话。如果对方愿意继续讨论游戏话题，你强调说你们可以一起尝试，看看每天严格按照这个规则，看看能不能赚钱。如果对方如果赚钱等你将来见到对方让对方请你吃饭哦。等待客户回答。
       27.不管对方回答什么，你都说今天很累了，要休息，晚点再聊，终止对话。不要说你对游戏话题有任何问题来问你的话。直接结束对话。
       ###
-  
+
   user: | # you don't need to change this for most cases
       Context
       ---
