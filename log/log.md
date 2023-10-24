@@ -71,6 +71,7 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
 - **Issues Encountered:**
   - Character don't understand my question
 - **Solutions/Actions Taken:**
+  - Understand LangChain's mechanism
   - Modify the user prompt template
 - **Next Steps:**
   - Support concurrent connection
@@ -85,6 +86,7 @@ Connecting WhatsApp with ReachChar, so users could talk with characters on Whats
 ## Code Changes
 
 ### Oct 10-11. 2023
+
 <details> <summary> <b>👇 click me </b></summary>
 
 Changes in `whatsapp.py`
