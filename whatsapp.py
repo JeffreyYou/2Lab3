@@ -17,6 +17,7 @@ from simpleaudio import WaveObject
 from pydub import AudioSegment
 from dotenv import load_dotenv
 import hashlib
+import subprocess
 
 
 load_dotenv()
@@ -24,6 +25,7 @@ executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
 
 # global user phone number
 global user
+global first_message
 
 CHUNK = 1024
 FORMAT = pyaudio.paInt16
@@ -183,6 +185,20 @@ def read_one_message():
             result = data["body"]["messageData"]["textMessageData"]["textMessage"]
             deleteMessage(data["receiptId"])
             return result
+        
+def clean_context():
+    print("[Test only] cleaning user context...")
+    commands = """
+    delete from interactions;
+    """
+    process = subprocess.Popen(['sqlite3', 'test.db'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate(input=commands.encode('utf-8'))
+    print("[Test only] cleaning finished")
+
+    print(stdout.decode('utf-8'))
+    if stderr:
+        print("Errors: ", stderr.decode('utf-8'))
+
 
 # async task to receive user message and send to server
 async def handle_text(websocket):
@@ -255,6 +271,8 @@ def establish_connection():
     # get user phone number
     global user
     user =  result[0]
+    global first_message
+    first_message = result[1]
     hash_object = hashlib.sha256()
     hash_object.update(user.encode())
     identifier = hash_object.hexdigest()[:40]
@@ -273,8 +291,13 @@ async def start_client(session_id, url):
         print(f"Client #{session_id} connected to server")
         welcome_message = await websocket.recv()
         # select Elon Musk
-        await websocket.send("1")
-        sendMessage("[Connection established!]\nYou are chatting with Elon Musk", user)
+        # await websocket.send("1")
+        # select Isable
+        await websocket.send("7")
+        # sendMessage("[Connection established!]\nYou are chatting with Elon Musk", user)
+        # sendMessage("[Test Message]\nYou are chatting with Isable", user)
+        # send first message
+        await websocket.send(first_message)
         clean_system_message()
         # create 2 task to send and receive message respectively 
         send_task = asyncio.create_task(handle_text(websocket))
@@ -282,6 +305,8 @@ async def start_client(session_id, url):
         await asyncio.gather(receive_task, send_task)
 
 async def main(url):
+    # clean context
+    clean_context()
 
     session_id = establish_connection()
     task = asyncio.create_task(start_client(session_id, url))

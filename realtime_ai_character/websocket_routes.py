@@ -231,7 +231,7 @@ async def handle_receive(websocket: WebSocket, session_id: str, user_id: str, db
 
         # Greet the user
         greeting_text = GREETING_TXT_MAP[language]
-        await manager.send_message(message=greeting_text, websocket=websocket)
+        # await manager.send_message(message=greeting_text, websocket=websocket)
 
         # Send end of the greeting so the client knows when to start listening
         await manager.send_message(message='[end]\n', websocket=websocket)
@@ -305,6 +305,10 @@ async def handle_receive(websocket: WebSocket, session_id: str, user_id: str, db
                 else:
                     quivr_info = None
                 message_id = str(uuid.uuid4().hex)[:16]
+                # logger.info(f'msg_data: {msg_data}')
+                # logger.info(f'user_input_template: {user_input_template}')
+                # logger.info(f'character: {character}')
+                # logger.info(f'history: {build_history(conversation_history)}')
                 response = await llm.achat(
                     history=build_history(conversation_history),
                     user_input=msg_data,
