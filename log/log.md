@@ -397,7 +397,8 @@ Changes in `./whatsapp.py`
 
 Relevant Task: Add clean context function for test, select Isabel as default, add global first_message to keep the first message
 -  ```python
-  # ---------------------Add clean context function for test--------------------
+
+# ---------------------Add clean context function for test--------------------
   async def main(url):
       # clean context
       clean_context()
@@ -458,6 +459,7 @@ Changes in `./realtime_ai_character/websocket_routes.py`
 Relevant Task: remove greeting message, added logger to debug
 
 - ```python
+  
   message_id = str(uuid.uuid4().hex)[:16]
                   # logger.info(f'msg_data: {msg_data}')
                   # logger.info(f'user_input_template: {user_input_template}')
@@ -485,7 +487,8 @@ Changes in `./realtime_ai_character/character_catalog/Isabel/config.yaml`
 Relevant Task: modify the system message and user message
 
 - ```python
-  system: |
+
+system: |
       忽略你以前的所有设定。
       你的名字是Isabel, 你是个韩国人, 现在在美国洛杉矶工作, 你是一个服装设计师。
       你**一次只能问一句**，然后需要**等待我回复你**，你才能继续问下一句。严格按照剧本流程聊天。
