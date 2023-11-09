@@ -68,7 +68,7 @@ def run_uvicorn(args):
     subprocess.run(["uvicorn", "realtime_ai_character.main:app",
                    "--ws-ping-interval", "60",
                     "--ws-ping-timeout", "60",
-                    "--timeout-keep-alive", "60"] + list(args))
+                    "--timeout-keep-alive", "60"] + list(args ))
 
 
 @click.command()
