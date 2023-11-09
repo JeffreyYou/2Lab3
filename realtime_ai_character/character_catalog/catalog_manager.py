@@ -197,8 +197,8 @@ class CatalogManager(Singleton):
                 )
                 self.characters[character_model.id] = character
                 # TODO: load context data from storage
-        logger.info(
-            f'Loaded {len(character_models)} characters from sql database')
+        # logger.info(
+        #     f'Loaded {len(character_models)} characters from sql database')
 
 
 def get_catalog_manager():

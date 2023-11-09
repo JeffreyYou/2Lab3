@@ -293,10 +293,22 @@ async def start_client(session_id, url):
         # select Elon Musk
         # await websocket.send("1")
         # select Isable
-        await websocket.send("7")
+
+        if first_message == "1":
+            print(f'{first_message}')
+            await websocket.send("10")
+        if first_message == "2":
+            print(f'{first_message}')
+            await websocket.send("7")
+        if first_message == "3":
+            print(f'{first_message}')
+            await websocket.send("8")
+
         # sendMessage("[Connection established!]\nYou are chatting with Elon Musk", user)
         # sendMessage("[Test Message]\nYou are chatting with Isable", user)
         # send first message
+        # await websocket.send(first_message)
+
         await websocket.send(first_message)
         clean_system_message()
         # create 2 task to send and receive message respectively 
